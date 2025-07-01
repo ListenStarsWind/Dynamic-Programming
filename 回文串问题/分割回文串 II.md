@@ -87,6 +87,51 @@ public:
         return dp[n-1];
     }
 };
+
+/*
+    思路: 含有预处理的动态规划 
+    check数组负责以常数时间级别判断某个区间(左闭右闭)是否是回文串区间
+    定义dp[i]表示[0,i]区间的子串进一步划分, 其子串全部为回文串的最小次数
+    极端分析, 最极端的情况下, 需要把这个[0,i]子串全部分解为一个个的单独字符
+    此时的分解次数恰好就是下标次数
+*/
+class Solution {
+public:
+    int minCut(string s) {
+        int check[2000][2000] = {0};
+
+        int n = s.size();
+        for(int i = n-1; i >= 0; --i)
+        {
+            for(int j = i; j < n; ++j)
+            {
+                // 首先首尾的两个字符很明显需要相等
+                // 存在两种特殊的首尾
+                // 一是ij相等, 此时会命中 i+1 > j-1
+                // 二是ij相邻, 此时也会直接命中
+                // 也就是说, 对于上述两种(i+1>j-1)情况, 
+                // 本质上只需要首尾相等这一个要求
+                if((s[i] == s[j]) && (i + 1 > j - 1 || check[i+1][j-1]))
+                    check[i][j] = 1;
+            }
+        }
+
+        int dp[2000] = {0};
+        for(int i = 0; i < n; ++i)
+        {
+            if(check[0][i] == 1) continue;
+            int def = i;
+            for(int j = 0; j < i; ++j)
+            {
+                if(check[j+1][i] == 1)
+                    def = min(def, dp[j] + 1);
+            }
+            dp[i] = def;
+        }
+
+        return dp[n-1];
+    }
+};
 ```
 
 # 完
