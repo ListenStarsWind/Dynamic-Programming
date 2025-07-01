@@ -59,6 +59,40 @@ public:
         return false;
     }
 };
+
+class Solution {
+public:
+    bool checkPartitioning(string s) {
+        int check[2000][2000] = {0};
+
+        int n = s.size();
+        for(int i = n-1; i >= 0; --i)
+        {
+            for(int j = i; j < n; ++j)
+            {
+                if((s[i] == s[j]) && (i+1 > j-1 || check[i+1][j-1]))
+                    check[i][j] = 1;
+            }
+        }
+
+        // i 的界限不必太过在意, 可以通过j进行调节, j违法, 违法的i自然也被舍弃
+
+        for(int i = 0; i < n-1; ++i)
+        {
+            for(int j = i + 2; j <= n-1; ++j)
+            {
+                if(check[0][i] && check[i+1][j-1] && check[j][n-1])
+                    return true;
+            }
+        }
+
+        return false;
+    }
+};
+
+/*
+    缺点, 不具有适配性, 复杂度较高
+*/
 ```
 
 # 完
